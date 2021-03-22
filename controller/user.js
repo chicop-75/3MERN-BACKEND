@@ -43,27 +43,28 @@ const login = async (req, res) => {
 
 const addCities = async (req, res) => {
     try {
-        res.send('Cities added')
+        const cities = req.body.cities.split(',')
+        const updateCities = await users.findByIdAndUpdate(req.params.id, {$push: {cities: cities}}, {
+            new: true,
+            useFindAndModify: false
+        })
+        res.status(200).send(updateCities)
     }catch (e) {
         res.status(401).send(e)
     }
 }
 const removeCities = async (req, res) => {
     try {
-        res.send('Cities Removed')
+        const cities = req.body.cities.split(',')
+        const updateCities = await users.findByIdAndUpdate(req.params.id, {$pullAll: {cities: cities}}, {
+            new: true,
+            useFindAndModify: false
+        })
+        res.status(200).send(updateCities)
     }catch (e) {
         res.status(401).send(e)
     }
 }
-
-const findOneCity = async (req, res) => {
-    try {
-        res.send('City Found and displayed')
-    }catch (e) {
-        res.status(401).send(e)
-    }
-}
-
 const findAllCities = async (req, res) => {
     try {
         res.send('Cities Found and displayed')
@@ -72,4 +73,4 @@ const findAllCities = async (req, res) => {
     }
 }
 
-export default {register, login, addCities, removeCities, findOneCity, findAllCities}
+export default {register, login, addCities, removeCities, findAllCities}
