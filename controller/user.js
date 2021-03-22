@@ -41,5 +41,35 @@ const login = async (req, res) => {
     }
 }
 
+const addCities = async (req, res) => {
+    try {
+        res.send('Cities added')
+    }catch (e) {
+        res.status(401).send(e)
+    }
+}
+const removeCities = async (req, res) => {
+    try {
+        res.send('Cities Removed')
+    }catch (e) {
+        res.status(401).send(e)
+    }
+}
 
-export default {register, login}
+const findOneCity = async (req, res) => {
+    try {
+        res.send('City Found and displayed')
+    }catch (e) {
+        res.status(401).send(e)
+    }
+}
+
+const findAllCities = async (req, res) => {
+    try {
+        res.send('Cities Found and displayed')
+    }catch (e) {
+        res.status(401).send(e)
+    }
+}
+
+export default {register, login, addCities, removeCities, findOneCity, findAllCities}

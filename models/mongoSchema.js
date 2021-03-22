@@ -17,6 +17,10 @@ const Schema = mongoose.Schema;
      lastName: {
          type: String,
          default: 'Musk'
+     },
+     cities: {
+         type: Array,
+         default: [],
      }
  }, {
      timestamps: true
