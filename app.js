@@ -1,11 +1,18 @@
 //Require Express and Cors
 import express from 'express';
+import cors from 'cors'
 import mongoose from 'mongoose'
 import bodyParser from 'body-parser'
 import indexRoutes from './routes/index'
 import usersRoutes from "./routes/users";
 import authGuard from "./middleware/authGuard";
+
 const app = express();
+
+const corsOptions = {
+    origin: 'http://localhost:3000',
+    optionsSuccessStatus: 200
+}
 
 //Mongo
 const url = 'mongodb://127.0.0.1:27017/nodeDb'
@@ -24,6 +31,7 @@ db.on('error', err => {
     console.error('connection error:', err)
 })
 
+app.use(cors(corsOptions))
 app.use(authGuard.authGuard)
 app.use(bodyParser.urlencoded({extended: true}))
 app.use(bodyParser.json())

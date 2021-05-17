@@ -19,22 +19,28 @@ const register = async (req, res) => {
             res.status(409).json('Email already exist, please choose an other one')
         }
     }catch (e) {
-        res.status(401).send(e)
+        res.status(401).json(e)
     }
 }
 
 const login = async (req, res) => {
     try {
-        const getHashPwd = await users.findOne({email: req.body.email})
-        const hash = await bcrypt.compare(req.body.password, getHashPwd.password)
-        if (hash) {
-            res.status(200).send(
-                jwt.sign({
-                    email: req.body.email,
-                    password: req.body.password},
-                    'authorization'));
-        }else {
-            res.status(401).send('Failed Login ! ')
+        const user = await users.findOne({email: req.body.email})
+        if (user) {
+            const hash = await bcrypt.compare(req.body.password, user.password)
+            if (hash) {
+                res.status(200).json({
+                    token: jwt.sign({
+                        email: req.body.email,
+                        password: req.body.password
+                    }, 'authorization'),
+                    user: user
+                })
+            } else {
+                res.status(401).json({error: 'Invalid Pwd'})
+            }
+        } else {
+            res.status(401).json({error: 'User does not exist'})
         }
     }catch (e) {
         res.status(401).send(e)
@@ -44,15 +50,16 @@ const login = async (req, res) => {
 const addCities = async (req, res) => {
     try {
         const cities = req.body.cities.split(',')
-        const updateCities = await users.findByIdAndUpdate(req.params.id, {$push: {cities: cities}}, {
+        const updateCities = await users.findByIdAndUpdate(req.params.id, {$addToSet: {cities: cities}}, {
             new: true,
             useFindAndModify: false
         })
         res.status(200).send(updateCities)
     }catch (e) {
-        res.status(401).send(e)
+        res.status(401).send({error: e})
     }
 }
+
 const removeCities = async (req, res) => {
     try {
         const cities = req.body.cities.split(',')
@@ -60,14 +67,18 @@ const removeCities = async (req, res) => {
             new: true,
             useFindAndModify: false
         })
-        res.status(200).send(updateCities)
+        res.status(200).json(updateCities)
     }catch (e) {
-        res.status(401).send(e)
+        res.status(401).send({error: e})
     }
 }
+
 const findAllCities = async (req, res) => {
     try {
-        res.send('Cities Found and displayed')
+        const user = await users.findById(req.params.id)
+        if (user) {
+            res.status(200).send(user.cities)
+        }
     }catch (e) {
         res.status(401).send(e)
     }
